@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot
+  xmlns:xacro="http://www.ros.org/wiki/xacro"
+  name="swerve_description">
+  <link
+    name="L1">
+    <!-- <inertial>
+      <origin
+        xyz="-4.00476291752038E-05 1.5230883749049E-18 0.0213742004629332"
+        rpy="0 0 0" />
+      <mass
+        value="0.224107576558084" />
+      <inertia
+        ixx="0.000130231725147389"
+        ixy="-2.57414906158047E-21"
+        ixz="2.25503476000854E-07"
+        iyy="0.00013052816246447"
+        iyz="8.86909686777474E-21"
+        izz="0.00015738570512586" />
+    </inertial> -->
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="L2">
+    <inertial>
+      <origin
+        xyz="1.53342859288164E-17 6.77658113217549E-05 0.0354679363404259"
+        rpy="0 0 0" />
+      <mass
+        value="0.288788070268931" />
+      <inertia
+        ixx="0.000199704667959969"
+        ixy="-9.85176322611288E-21"
+        ixz="2.83937033200544E-20"
+        iyy="0.000216138807129296"
+        iyz="6.85023271019334E-07"
+        izz="0.000170363569665349" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J1"
+    type="revolute">
+    <origin
+      xyz="0 0 0.049"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="L1" />
+    <child
+      link="L2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="1"
+      velocity="1" />
+  </joint>
+  <link
+    name="L3">
+    <inertial>
+      <origin
+        xyz="-0.180100806431483 0.00677897503766206 -4.15212834481378E-17"
+        rpy="0 0 0" />
+      <mass
+        value="1.30830909910812" />
+      <inertia
+        ixx="0.00125403613110025"
+        ixy="0.00107130691888321"
+        ixz="-3.04089334451641E-18"
+        iyy="0.0115256284468018"
+        iyz="-5.86493137009772E-19"
+        izz="0.0114405751815728" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J2"
+    type="revolute">
+    <origin
+      xyz="0 0 0.048"
+      rpy="1.5708 0 1.5708" />
+    <parent
+      link="L2" />
+    <child
+      link="L3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="1"
+      velocity="1" />
+  </joint>
+  <link
+    name="L4">
+    <inertial>
+      <origin
+        xyz="-0.0721613090993007 -1.29246104471348E-05 6.82318277997334E-09"
+        rpy="0 0 0" />
+      <mass
+        value="0.576130071786513" />
+      <inertia
+        ixx="0.000241380542099252"
+        ixy="-7.17192772685589E-07"
+        ixz="2.37743125571958E-10"
+        iyy="0.00204632259848738"
+        iyz="-1.10091459777993E-09"
+        izz="0.00202764359158527" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J3"
+    type="revolute">
+    <origin
+      xyz="-0.32136 0.075 0"
+      rpy="0 0 3.1416" />
+    <parent
+      link="L3" />
+    <child
+      link="L4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="1"
+      velocity="1" />
+  </joint>
+  <link
+    name="L5">
+    <inertial>
+      <origin
+        xyz="-6.50981256772141E-19 -3.85886975779737E-05 0.109704691300639"
+        rpy="0 0 0" />
+      <mass
+        value="0.57067066973314" />
+      <inertia
+        ixx="0.00230039684471546"
+        ixy="4.37298077933979E-22"
+        ixz="-4.31006071212647E-20"
+        iyy="0.00230606582041509"
+        iyz="-2.39388141086131E-06"
+        izz="0.000223308724269993" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J4"
+    type="revolute">
+    <origin
+      xyz="-0.171 0 0"
+      rpy="3.1416 1.5708 0" />
+    <parent
+      link="L4" />
+    <child
+      link="L5" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="1"
+      velocity="1" />
+  </joint>
+  <link
+    name="L6">
+    <inertial>
+      <origin
+        xyz="-0.0444873523893798 -0.0145161437624376 -1.47929633196819E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.141027694288355" />
+      <inertia
+        ixx="0.000108181143888457"
+        ixy="-3.4937581039763E-05"
+        ixz="-2.01415593059429E-20"
+        iyy="0.000127122375740808"
+        iyz="-2.67192860113527E-20"
+        izz="0.00011185516522554" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.796078431372549 0.823529411764706 0.937254901960784 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/L6.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J5"
+    type="revolute">
+    <origin
+      xyz="0 0 0.1885"
+      rpy="3.1416 1.5708 0" />
+    <parent
+      link="L5" />
+    <child
+      link="L6" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="1"
+      velocity="1" />
+  </joint>
+  <link
+    name="END_EFF">
+    <inertial>
+      <origin
+        xyz="-2.6012904646066E-18 0 -0.034"
+        rpy="0 0 0" />
+      <mass
+        value="0.0654236670110075" />
+      <inertia
+        ixx="3.02189191937718E-05"
+        ixy="3.82342058671788E-54"
+        ixz="-1.27816488471228E-37"
+        iyy="3.02189191937718E-05"
+        iyz="-7.52253441158166E-38"
+        izz="1.00179990110605E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/END_EFF.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://swerve_description/meshes/END_EFF.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="J_END_EFF"
+    type="continuous">
+    <origin
+      xyz="-0.118 0 0"
+      rpy="3.1416 1.5708 0" />
+    <parent
+      link="L6" />
+    <child
+      link="END_EFF" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+</robot>
