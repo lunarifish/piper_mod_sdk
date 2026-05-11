@@ -29,11 +29,11 @@ struct ArmConfig {
 
   // 运动学 / 动力学
   std::array<std::pair<float, float>, 5> joint_limits{{
-      {-(90_deg).rad(), (90_deg).rad()},    // j1 yaw
-      {-M_PIf * 2.f, M_PIf * 2.f},          // j2 pitch1
-      {-M_PIf * 2.f, M_PIf * 2.f},          // j3 pitch2
-      {-M_PIf, M_PIf},                      // j4 roll1
-      {-(100_deg).rad(), (100_deg).rad()},  // j5 pitch3
+      {-2.10860634, 2.10860634},  // j1 yaw
+      {0.311221004, 2.91898727},  // j2 pitch1
+      {-2.92051315, 0.f},         // j3 pitch2
+      {-2.75558853, 2.82501698},  // j4 roll1
+      {-2.01972198, 2.01018524},  // j5 pitch3
   }};  ///< {min, max}（逻辑坐标，rad），两边的臂是一样的
   ArmDynamics::Params dynamics_params;  ///< 动力学参数
 

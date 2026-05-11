@@ -4,6 +4,8 @@
 #include "resources.hpp"
 #include "fsm.hpp"
 
+#include <atomic>
+
 struct Arm {
   ArmResources resources;
 
@@ -29,6 +31,23 @@ struct Arm {
        &state_host_control,        //
        &state_sequencing,          //
        &state_fault};
+
+  std::atomic<bool> enable_cmd_pending_{false};
+  std::atomic<bool> mode_ctrl_cmd_pending_{false};
+  std::atomic<bool> joint_ctrl_cmd_pending_{false};
+
+  void ProcessDeferredEvents() {
+    auto &shared = SharedResources::GetInstance();
+    if (enable_cmd_pending_.exchange(false, std::memory_order_acquire)) {
+      fsm.receive(fsm_arm::event::EnableCommand{shared.host.rx_data().enable_command});
+    }
+    if (mode_ctrl_cmd_pending_.exchange(false, std::memory_order_acquire)) {
+      fsm.receive(fsm_arm::event::ModeCtrlCommand{shared.host.rx_data().mode_ctrl_command});
+    }
+    if (joint_ctrl_cmd_pending_.exchange(false, std::memory_order_acquire)) {
+      fsm.receive(fsm_arm::event::JointCtrlCommand{shared.host.rx_data().joint_ctrl_command});
+    }
+  }
 
  public:
   explicit Arm(const ArmConfig &config) : resources{config} {}
@@ -68,11 +87,11 @@ struct Arm {
     });
 
     shared.host.OnEnableCommand(
-        [&] { fsm.receive({fsm_arm::event::EnableCommand{shared.host.rx_data().enable_command}}); });
+        [&] { enable_cmd_pending_.store(true, std::memory_order_release); });
     shared.host.OnModeCtrlCommand(
-        [&] { fsm.receive({fsm_arm::event::ModeCtrlCommand{shared.host.rx_data().mode_ctrl_command}}); });
+        [&] { mode_ctrl_cmd_pending_.store(true, std::memory_order_release); });
     shared.host.OnJointCtrlCommand(
-        [&] { fsm.receive({fsm_arm::event::JointCtrlCommand{shared.host.rx_data().joint_ctrl_command}}); });
+        [&] { joint_ctrl_cmd_pending_.store(true, std::memory_order_release); });
 
     fsm.set_states(state_list_, std::size(state_list_));
     fsm.start();
@@ -84,6 +103,7 @@ struct Arm {
    */
   void Tick() {
     resources.device_manager.Update();
+    ProcessDeferredEvents();
     fsm.receive(fsm_arm::event::ControlLoop{});
   }
 
