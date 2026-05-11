@@ -10,6 +10,7 @@ from typing import Optional
 
 import can
 
+from .ik_solver import IKSolver
 from .rx_daemon import JointState, PressureSensorData, RxDaemon, SystemStatus
 
 
@@ -122,7 +123,8 @@ class SwerveArm:
         # 加载URDF模型
         self._pin_model: object
         self._pin_data: object
-        self._end_eff_frame_id: int = -1
+        self._end_eff_frame_id: int = -2
+        self._ik_solver: IKSolver
         self._load_pinocchio_model()
 
     def _load_pinocchio_model(self) -> None:
@@ -140,11 +142,12 @@ class SwerveArm:
             self._pin_model = pin.buildModelFromUrdf(str(urdf_path))
 
         self._pin_data = self._pin_model.createData()
+        self._ik_solver = IKSolver(self._pin_model, self._pin_data)
 
         if self._pin_model.existFrame("END_EFF"):
-            self._end_eff_frame_id = self._pin_model.getFrameId("END_EFF")
+            self._end_eff_frame_id = self._pin_model.getFrameId("J5")
         else:
-            self._end_eff_frame_id = self._pin_model.njoints - 1
+            self._end_eff_frame_id = self._pin_model.njoints - 2
 
     def _send_frame(self, offset: int, payload: bytes) -> None:
         """发送一帧 CAN FD 数据."""
@@ -251,71 +254,20 @@ class SwerveArm:
             qw=float(quat.w),
         )
 
-    def end_pose_ctrl(
-        self,
-        target: EndEffectorPose,
-        max_iter: int = 200,
-        tol: float = 1e-4,
-        dt: float = 0.1,
-        damping: float = 1e-3,
-    ) -> None:
-        """末端笛卡尔位姿控制（逆运动学 + 关节控制）。
+    def end_pose_ctrl(self, target: EndEffectorPose) -> None:
+        """末端笛卡尔位姿控制（IK + 关节控制）。
 
-        使用Pinocchio雅可比矩阵进行阻尼最小二乘迭代IK，
-        然后将关节角度下发给机械臂。
+        使用解析逆运动学求解器，传入当前关节状态用于就近原则优化。
 
         Args:
-            target:   目标末端位姿.
-            max_iter: IK最大迭代次数.
-            tol:      收敛阈值 (位姿误差范数).
-            dt:       每次迭代步长系数.
-            damping:  阻尼最小二乘阻尼因子.
+            target: 目标末端位姿.
         """
-        import numpy as np  # type: ignore[import-untyped]
-        import pinocchio as pin  # type: ignore[import-untyped]
-
-        # 获取当前关节角度作为 IK 初始值
         js = self._rx.get_joint_state()
-        if js is None:
-            raise RuntimeError("无关节数据，无法执行末端控制")
-
-        q = np.array(js.position, dtype=np.float64)
-
-        # 目标位姿 SE3
-        target_se3 = pin.SE3(
-            pin.Quaternion(target.qx, target.qy, target.qz, target.qw),
-            np.array([target.x, target.y, target.z]),
-        )
-
-        identity6 = np.eye(6)
-
-        for _ in range(max_iter):
-            pin.forwardKinematics(self._pin_model, self._pin_data, q)
-            pin.updateFramePlacements(self._pin_model, self._pin_data)
-
-            # 位姿误差 (se3切空间)
-            current_placement = self._pin_data.oMf[self._end_eff_frame_id]
-            error = pin.log(current_placement.inverse() * target_se3)
-            if np.linalg.norm(error.vector) < tol:
-                break
-
-            # 末端frame雅可比 (世界坐标系)
-            J = pin.computeFrameJacobian(
-                self._pin_model,
-                self._pin_data,
-                q,
-                self._end_eff_frame_id,
-                pin.ReferenceFrame.WORLD,
-            )
-
-            # 阻尼最小二乘
-            JJt = J @ J.T
-            J_pinv = J.T @ np.linalg.solve(JJt +
-                                           damping * identity6, identity6)
-            dq = J_pinv @ error.vector
-            q += dq * dt
-
-        self.joint_ctrl(q[:5].tolist())
+        q_init = list(js.position) if js is not None else None
+        q = self._ik_solver.solve(target, q_init=q_init)
+        if q is None:
+            raise RuntimeError(f"IK 无解，目标不可达: {target}")
+        self.joint_ctrl(q[:5])
 
     def close(self) -> None:
         """失能机械臂，关闭 CAN 通信，并停止守护线程."""

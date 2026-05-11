@@ -30,7 +30,7 @@
   </link>
 
   <joint name="J2" type="revolute">
-    <origin xyz="0 0 0.048" rpy="1.5708 0 1.5708"/>
+    <origin xyz="0 0 0.048" rpy="1.5708 2.912955 1.5708"/>
     <parent link="L2"/>
     <child link="L3"/>
     <axis xyz="0 0 1"/>
@@ -47,7 +47,7 @@
   </link>
 
   <joint name="J3" type="revolute">
-    <origin xyz="-0.32136 0.075 0" rpy="0 0 3.1416"/>
+    <origin xyz="-0.32136 0.075 0" rpy="0 0 -0.228638"/>
     <parent link="L3"/>
     <child link="L4"/>
     <axis xyz="0 0 1"/>
